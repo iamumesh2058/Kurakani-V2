@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
     const hashedPasswords = await hashedPassword(req.body.password);
     req.body.password = hashedPasswords
     const user = await User.create(req.body);
-    res.status(201).json({ msg: "User created", user: user });
+    res.status(201).json({ msg: "User created" });
 }
 
 
@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
         expires: new Date(Date.now() + oneDay),
     });
 
-    res.status(200).json({ msg: "User logged in" })
+    res.status(200).json({ msg: "User logged in", user: user })
 }
 
 
@@ -38,5 +38,5 @@ exports.logout = (req, res) => {
         httpOnly: true,
         expires: new Date(Date.now()),
     });
-    res.status(200).json({ msg: "User logged out!"});
+    res.status(200).json({ msg: "User logged out!" });
 }

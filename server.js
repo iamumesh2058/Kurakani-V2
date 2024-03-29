@@ -9,10 +9,15 @@ const app = express();
 
 // routes
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
+const topicRoutes = require("./routes/topic.routes");
+const roomRoutes = require("./routes/room.routes");
+const messageRoutes = require("./routes/message.routes");
 
 
-// middleware
-const errorHandlerMiddleware = require("./middlewares/error.handler.mddleware");
+// middlewares
+const errorHandlerMiddleware = require("./middlewares/error.handler.middleware");
+const { authenticateUser } = require("./middlewares/auth.middleware");
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
@@ -25,6 +30,10 @@ app.use(express.json());
 
 // using routes
 app.use("/api/auth", authRoutes);
+app.use("/api/user", authenticateUser, userRoutes);
+app.use("/api/topic", topicRoutes);
+app.use("/api/rooms", roomRoutes);
+app.use("/api/message", messageRoutes);
 
 
 app.use("*", (req, res) => {

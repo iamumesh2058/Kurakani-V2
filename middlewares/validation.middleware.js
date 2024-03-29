@@ -1,6 +1,8 @@
 const { body, param, validationResult } = require("express-validator");
 const { BadRequestError, NotFoundError, UnauthorizedError } = require("../errors/cutom.error");
 const User = require('../models/user.model');
+const Topic = require("../models/topic.model");
+const Room = require("../models/room.model");
 const mongoose = require("mongoose");
 
 
@@ -19,22 +21,21 @@ const withValidationError = (validateValues) => {
 };
 
 
-// exports.validateIdParam = withValidationError([
-//     param('id').custom(async (value, { req }) => {
-//         const isValidId = mongoose.Types.ObjectId.isValid(value);
-//         if (!isValidId) throw new Error('Invalid MongoDB id');
-
-//         const job = await Job.findById(value);
-//         if (!job) throw new NotFoundError(`No job with id ${value}`);
-
-//         const isAdmin = req.user.role === 'admin';
-//         const isOwner = req.user.userId === job.createdBy.toString()
-//         if (!isAdmin && !isOwner) throw new UnauthorizedError('Not authorized to access this route');
-//     }),
-// ]);
+exports.validateIdParam = withValidationError([
+    param('id').custom(async (value) => {
+        const isValidId = mongoose.Types.ObjectId.isValid(value);
+        if (!isValidId) throw new Error('Invalid MongoDB id');
+    }),
+]);
 
 
 exports.validateRegisterInput = withValidationError([
+    body('name')
+        .notEmpty()
+        .withMessage('Name is required')
+        .isLength({ min: 3 })
+        .withMessage('Name must be at least 3 characters'),
+
     body('username')
         .notEmpty()
         .withMessage('Username is required')
@@ -73,7 +74,7 @@ exports.validateRegisterInput = withValidationError([
 exports.validateLoginInput = withValidationError([
     body('email')
         .notEmpty()
-        .withMessage('email is required')
+        .withMessage('Email is required')
         .isEmail().withMessage("Invalid email format")
         .custom(async (email) => {
             const user = await User.findOne({ email });
@@ -83,23 +84,55 @@ exports.validateLoginInput = withValidationError([
         }),
     body('password')
         .notEmpty()
-        .withMessage('password is required')
-])
+        .withMessage('Password is required')
+]);
 
 
-// exports.validateUpdateUser = withValidationError([
-//     body('firstName').notEmpty().withMessage('name is required'),
-//     body('email')
-//         .notEmpty()
-//         .withMessage('email is required')
-//         .isEmail()
-//         .withMessage("Invalid email format").
-//         custom(async (email, { req }) => {
-//             const user = await User.findOne({ email });
-//             if (user && user._id.toString() !== req.user.userId) {
-//                 throw new BadRequestError('email already exists');
-//             }
-//         }),
-//     body('location').notEmpty().withMessage('location is required'),
-//     body('lastName').notEmpty().withMessage('last name is required')
-// ]);
+exports.validateUpdateUser = withValidationError([
+    body('username').notEmpty().withMessage('Username is required'),
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage("Invalid email format").
+        custom(async (email, { req }) => {
+            const user = await User.findOne({ email });
+            if (user && user._id.toString() !== req.user.userId) {
+                throw new BadRequestError('Email already exists');
+            }
+        }),
+    body('bio').notEmpty().withMessage('Bio is required'),
+]);
+
+
+exports.validateTopic = withValidationError([
+    body('topic')
+        .notEmpty()
+        .withMessage('Topic is required')
+        .custom(async (topic) => {
+            const topicName = await Topic.findOne({ topic: topic });
+            if (topicName) {
+                throw new BadRequestError('Topic already exist');
+            }
+        }),
+]);
+
+
+exports.validateRoom = withValidationError([
+    body('roomName')
+        .notEmpty()
+        .withMessage('Room name is required')
+        .isLength({ min: 3 }).withMessage("Room name must be at least 3 characters"),
+
+    body('description')
+        .notEmpty()
+        .withMessage('Description name is required')
+        .isLength({ min: 10 }).withMessage("Room name must be at least 10 characters")
+]);
+
+
+exports.validateMessage = withValidationError([
+    body('body')
+        .notEmpty()
+        .withMessage('Message is required')
+]);
