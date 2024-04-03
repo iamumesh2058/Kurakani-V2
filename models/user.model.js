@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     bio:String,
-    avatar: String
+    avatar: String,
+    status: {
+        type: String,
+        default: "Offline"
+    }
 }, {timestamps: true});
 
 

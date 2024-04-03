@@ -11,10 +11,14 @@ export const TopicContext = createContext({
 export const TopicProvider = ({ children }) => {
     const [topics, setTopics] = useState([]);
 
-    useEffect(() => {
-        getAllTopics()
+    const setTopicsFunction = async () => {
+        await getAllTopics()
             .then(data => setTopics(data.topics))
             .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+        setTopicsFunction();
     }, []);
 
     const value = { topics, setTopics };

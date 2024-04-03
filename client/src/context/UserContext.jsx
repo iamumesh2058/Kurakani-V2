@@ -14,8 +14,8 @@ export const UserProvider = ({ children }) => {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(null);
 
-    const logoutUser = () => {
-        logout()
+    const logoutUser = async () => {
+        await logout()
             .then((data) => {
                 toast.success(data?.msg);
                 navigate('/');

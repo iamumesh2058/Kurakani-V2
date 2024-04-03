@@ -12,15 +12,15 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const fetchCurrentUser = () => {
-        getCurrentUser()
+    const fetchCurrentUser = async () => {
+        await getCurrentUser()
         .then(data => setCurrentUser(data.user))
         .catch(err => console.log(err));
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        login(email, password)
+        await login(email, password)
             .then(data => {
                 if (data.msg) {
                     fetchCurrentUser();

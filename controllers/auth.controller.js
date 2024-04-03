@@ -19,6 +19,9 @@ exports.login = async (req, res) => {
     const isValidUser = user && (await comparePassword(req.body.password, user.password));
     if (!isValidUser) throw new UnauthenticatedError("Invalid creadentials");
 
+    user.status = "Online";
+    await user.save();
+
     const token = createJWT({ userId: user._id });
 
     const oneDay = 1000 * 60 * 60 * 24;
@@ -33,7 +36,10 @@ exports.login = async (req, res) => {
 
 
 // logout
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+    user.status = "Offline";
+    await user.save();
     res.cookie('token', 'logout', {
         httpOnly: true,
         expires: new Date(Date.now()),

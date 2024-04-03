@@ -28,14 +28,14 @@ exports.createRoom = async (req, res) => {
 
 // get all rooms
 exports.getAllRooms = async (req, res) => {
-    const rooms = await Room.find().sort("-createddAt").populate("host", ["username", "email"]).populate('topic', 'topic').populate("participants", ['username', "email"]);
+    const rooms = await Room.find().sort("-createdAt").populate("host", ["username", "status", "avatar"]).populate('topic', 'topic').populate("participants", ['name', "username", "avatar"]);
     res.status(200).json({ rooms });
 }
 
 
 // get single room
 exports.getSingleRoom = async (req, res) => {
-    const room = await Room.findById(req.params.id).populate("host", ["username", "email"]).populate('topic', 'topic').populate("participants", ['username', "email"]);
+    const room = await Room.findById(req.params.id).populate("host", ["username", "status", "avatar"]).populate('topic', 'topic').populate("participants", ['name', "username", "avatar"]);
     if (!room) throw new NotFoundError(`No room with id ${req.params.id}`);
     res.status(200).json({ room });
 }

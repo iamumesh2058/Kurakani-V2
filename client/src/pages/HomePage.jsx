@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import TopicComponent from '../components/TopicComponent';
 import ActivityComponent from '../components/ActivityComponent';
+import { Link } from 'react-router-dom';
+import { RoomContext } from '../context/RoomContext';
+import FeedComponent from '../components/FeedComponent';
 
 const HomePage = () => {
+    const { rooms } = useContext(RoomContext);
     return (
         <main className="layout layout--3">
             <div className="container">
@@ -10,7 +14,7 @@ const HomePage = () => {
                     <TopicComponent />
                 </div>
 
-                {/* <!-- Room List Start -->
+                {/* Room List Start */}
                 <div className="roomList">
                     <div className="mobile-menu">
                         <form className="header__search" accept="{% url 'home' %}" method="get">
@@ -25,16 +29,16 @@ const HomePage = () => {
                             </label>
                         </form>
                         <div className="mobile-menuItems">
-                            <a className="btn btn--main btn--pill" href="{% url 'topics' %}">Browse Topics</a>
-                            <a className="btn btn--main btn--pill" href="{% url 'activities' %}">Recent Activities</a>
+                            <Link className="btn btn--main btn--pill" href="{% url 'topics' %}">Browse Topics</Link>
+                            <Link className="btn btn--main btn--pill" href="{% url 'activities' %}">Recent Activities</Link>
                         </div>
                     </div>
                     <div className="roomList__header">
                         <div>
                             <h2>Study Room</h2>
-                            <p>{{ rooms.count }} Rooms available</p>
+                            <p>{rooms.length} Rooms available</p>
                         </div>
-                        <a className="btn btn--main" href="{% url 'create-room' %}">
+                        <Link className="btn btn--main" to={'/create-room'}>
                             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                                 <title>add</title>
                                 <path
@@ -42,12 +46,18 @@ const HomePage = () => {
                                 ></path>
                             </svg>
                             Create Room
-                        </a>
+                        </Link>
                     </div>
 
-                    {% include 'feed_component.html' %}
+                    {
+                        rooms.map((room) => {
+                            return (
+                                <FeedComponent key={room._id} room={room} />
+                            )
+                        })
+                    }
                 </div>
-                <!-- Room List End --> */}
+                {/* Room List End */}
 
 
                 <div className="activities">

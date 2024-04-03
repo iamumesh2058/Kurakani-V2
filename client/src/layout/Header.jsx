@@ -10,7 +10,7 @@ const Header = () => {
     return (
         <header className="header header--loggedIn">
             <div className="container">
-                <Link href="/" className="header__logo">
+                <Link to="/" className="header__logo">
                     <img src={Logo} />
                     <h1>Kurakani</h1>
                 </Link>
